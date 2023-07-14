@@ -23,16 +23,11 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "@/* ": [
-        "./*"
-      ],
       "~/*": [
-        "./app/*"
+        "./src/*"
       ],
-      "~/components/*": [
-        "./app/components/*"
-      ]
     }
   },
   "include": [
