@@ -6,7 +6,7 @@ import { ThemeProvider } from "~/components/theme-provider";
 import { cn } from "~/lib/utils";
 import { SiteHeader } from "~/components/header";
 import { SiteFooter } from "~/components/site-footer";
-import ContextProvider from "./context";
+import ContextProvider from "~/context";
 
 const fontSans = FontSans({
   subsets: ["latin"],

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "./ui/tabs";
 import {
   Card,
@@ -11,14 +11,13 @@ import {
 } from "./ui/card";
 import { Icons } from "./icons";
 import Timer from "./timer";
+import { FocusTimerContext } from "~/context/focus-timer";
+import { BreakTimerContext } from "~/context/break-timer";
 
 export default function Pomodoro() {
-  const [progress, setProgress] = React.useState(13);
+  const { focusTimer, handleFocusTimer } = useContext(FocusTimerContext);
+  const { breakTimer, handleBreakTimer } = useContext(BreakTimerContext);
 
-  React.useEffect(() => {
-    const timer = setTimeout(() => setProgress(66), 500);
-    return () => clearTimeout(timer);
-  }, []);
   return (
     <Tabs defaultValue="focus">
       <TabsList className="grid w-full grid-cols-2">
@@ -37,7 +36,7 @@ export default function Pomodoro() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Timer defaultMinutes={25} />
+            <Timer defaultTime={focusTimer} handleTimer={handleFocusTimer} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -53,7 +52,7 @@ export default function Pomodoro() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Timer defaultMinutes={5} />
+            <Timer defaultTime={breakTimer} handleTimer={handleBreakTimer} />
           </CardContent>
         </Card>
       </TabsContent>

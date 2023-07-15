@@ -5,17 +5,13 @@ import CircularProgress from "./circular-progress";
 import useAudioNotification from "~/hooks/audio-notification";
 
 interface TimerProps {
-  defaultMinutes: number;
-  defaultSeconds?: number;
+  defaultTime: number;
+  handleTimer: (val: number) => void;
 }
 
-const Timer: React.FC<TimerProps> = ({
-  defaultMinutes = 5,
-  defaultSeconds = 0,
-}) => {
-  const [totalSeconds, setTotalSeconds] = useState(0);
-  const [minutes, setMinutes] = useState(defaultMinutes);
-  const [seconds, setSeconds] = useState(defaultSeconds);
+const Timer: React.FC<TimerProps> = ({ defaultTime, handleTimer }) => {
+  const [minutes, setMinutes] = useState(Math.floor(defaultTime / 60));
+  const [seconds, setSeconds] = useState(defaultTime % 60);
   const [percentage, setPercentage] = useState(0);
   const [isTicking, setIsTicking] = useState(false);
 
@@ -30,7 +26,7 @@ const Timer: React.FC<TimerProps> = ({
   });
 
   useEffect(() => {
-    if (totalSeconds > 0) {
+    if (defaultTime > 0) {
       const interval = setInterval(() => {
         if (isTicking) {
           if (seconds > 0) {
@@ -44,19 +40,19 @@ const Timer: React.FC<TimerProps> = ({
             setIsTicking(false);
           }
           const elapsedSeconds = minutes * 60 + seconds;
-          const currentPercentage = (elapsedSeconds / totalSeconds) * 100;
+          const currentPercentage = (elapsedSeconds / defaultTime) * 100;
           setPercentage(currentPercentage);
         }
       }, 1000);
 
       return () => clearInterval(interval);
     }
-  }, [minutes, seconds, totalSeconds, isTicking, playAlarmSound]);
+  }, [minutes, seconds, defaultTime, isTicking, playAlarmSound]);
 
   const handleStartClick = () => {
     const newTotalSeconds = minutes * 60 + seconds;
     if (!isNaN(newTotalSeconds) && newTotalSeconds >= 0) {
-      setTotalSeconds(newTotalSeconds);
+      handleTimer(newTotalSeconds);
       setPercentage(0);
       setIsTicking(true);
       playStartSound();
@@ -64,13 +60,25 @@ const Timer: React.FC<TimerProps> = ({
   };
 
   const handleStopClick = () => {
-    setTotalSeconds(minutes * 60 + seconds);
+    handleTimer(minutes * 60 + seconds);
     setIsTicking(false);
     playStopSound();
   };
 
   const formatTime = (time: number): string => {
     return time.toString().padStart(2, "0");
+  };
+
+  const handleSetMinutes = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMinutes = parseInt(e.target.value, 10);
+    if (newMinutes && newMinutes > 0 && newMinutes < 60) setMinutes(newMinutes);
+    else setMinutes(0);
+  };
+
+  const handleSetSeconds = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSeconds = parseInt(e.target.value, 10);
+    if (newSeconds && newSeconds > 0 && newSeconds < 60) setSeconds(newSeconds);
+    else setSeconds(0);
   };
 
   return (
@@ -92,8 +100,8 @@ const Timer: React.FC<TimerProps> = ({
             className="w-20"
             type="number"
             value={minutes}
-            onChange={(e) => setMinutes(parseInt(e.target.value))}
-            placeholder="MM"
+            onChange={handleSetMinutes}
+            placeholder="min"
             min={0}
             max={60}
           />
@@ -101,8 +109,8 @@ const Timer: React.FC<TimerProps> = ({
             className="w-20"
             type="number"
             value={seconds}
-            onChange={(e) => setSeconds(parseInt(e.target.value))}
-            placeholder="SS"
+            onChange={handleSetSeconds}
+            placeholder="sec"
             min={0}
             max={60}
           />
