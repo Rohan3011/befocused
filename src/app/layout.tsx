@@ -6,6 +6,7 @@ import { ThemeProvider } from "~/components/theme-provider";
 import { cn } from "~/lib/utils";
 import { SiteHeader } from "~/components/header";
 import { SiteFooter } from "~/components/site-footer";
+import ContextProvider from "./context";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -74,11 +75,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-screen flex flex-col">
-            <SiteHeader heading="BeFocused" />
-            <div className="flex-1 h-full">{children}</div>
-            <SiteFooter className="mt-auto" />
-          </div>
+          <ContextProvider>
+            <div className="min-h-screen flex flex-col">
+              <SiteHeader heading="BeFocused" />
+              <div className="flex-1 h-full">{children}</div>
+              <SiteFooter className="mt-auto" />
+            </div>
+          </ContextProvider>
         </ThemeProvider>
       </body>
     </html>
