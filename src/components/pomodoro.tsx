@@ -33,11 +33,11 @@ export default function Pomodoro() {
               Focus
             </CardTitle>
             <CardDescription>
-              Focus timer, description for focus pomodoro
+              Stay in the zone with focused work sessions.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Timer />
+            <Timer defaultMinutes={25} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -49,11 +49,11 @@ export default function Pomodoro() {
               Break
             </CardTitle>
             <CardDescription>
-              break timer, description for break pomodoro
+              Take refreshing breaks to recharge your mind.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Timer />
+            <Timer defaultMinutes={5} />
           </CardContent>
         </Card>
       </TabsContent>

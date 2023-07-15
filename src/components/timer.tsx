@@ -3,16 +3,22 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import CircularProgress from "./circular-progress";
 
-const Timer: React.FC = () => {
-  const [inputMinutes, setInputMinutes] = useState("");
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
+interface TimerProps {
+  defaultMinutes: number;
+  defaultSeconds?: number;
+}
+
+const Timer: React.FC<TimerProps> = ({
+  defaultMinutes = 5,
+  defaultSeconds = 0,
+}) => {
+  const [totalSeconds, setTotalSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(defaultMinutes);
+  const [seconds, setSeconds] = useState(defaultSeconds);
   const [percentage, setPercentage] = useState(0);
   const [isTicking, setIsTicking] = useState(false);
 
   useEffect(() => {
-    const totalSeconds = parseInt(inputMinutes) * 60;
-
     if (totalSeconds > 0) {
       const interval = setInterval(() => {
         if (isTicking) {
@@ -32,25 +38,19 @@ const Timer: React.FC = () => {
 
       return () => clearInterval(interval);
     } else setIsTicking(false);
-  }, [minutes, seconds, inputMinutes, isTicking]);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputMinutes(event.target.value);
-  };
+  }, [minutes, seconds, totalSeconds, isTicking]);
 
   const handleStartClick = () => {
-    const parsedMinutes = parseInt(inputMinutes, 10);
-    if (!isNaN(parsedMinutes) && parsedMinutes >= 0) {
-      setMinutes(parsedMinutes);
-      setSeconds(0);
+    const newTotalSeconds = minutes * 60 + seconds;
+    if (!isNaN(newTotalSeconds) && newTotalSeconds >= 0) {
+      setTotalSeconds(newTotalSeconds);
       setPercentage(0);
       setIsTicking(true);
     }
   };
 
   const handleStopClick = () => {
-    const pausedTime = String(minutes);
-    setInputMinutes(pausedTime);
+    setTotalSeconds(minutes * 60 + seconds);
     setIsTicking(false);
   };
 
@@ -74,10 +74,22 @@ const Timer: React.FC = () => {
       ) : (
         <div className="mt-4 flex flex-col sm:flex-row gap-4">
           <Input
+            className="w-20"
             type="number"
-            value={inputMinutes}
-            onChange={handleInputChange}
-            placeholder="Enter minutes"
+            value={minutes}
+            onChange={(e) => setMinutes(parseInt(e.target.value))}
+            placeholder="MM"
+            min={0}
+            max={60}
+          />
+          <Input
+            className="w-20"
+            type="number"
+            value={seconds}
+            onChange={(e) => setSeconds(parseInt(e.target.value))}
+            placeholder="SS"
+            min={0}
+            max={60}
           />
           <Button onClick={handleStartClick}>Start</Button>
         </div>
