@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import CircularProgress from "./circular-progress";
+import useAudioNotification from "~/hooks/audio-notification";
 
 interface TimerProps {
   defaultMinutes: number;
@@ -18,6 +19,16 @@ const Timer: React.FC<TimerProps> = ({
   const [percentage, setPercentage] = useState(0);
   const [isTicking, setIsTicking] = useState(false);
 
+  const playStartSound = useAudioNotification({
+    audioFile: "/assets/audio/start.mp3",
+  });
+  const playStopSound = useAudioNotification({
+    audioFile: "/assets/audio/stop.mp3",
+  });
+  const playAlarmSound = useAudioNotification({
+    audioFile: "/assets/audio/clock-alarm.mp3",
+  });
+
   useEffect(() => {
     if (totalSeconds > 0) {
       const interval = setInterval(() => {
@@ -29,6 +40,8 @@ const Timer: React.FC<TimerProps> = ({
             setSeconds(59);
           } else {
             clearInterval(interval);
+            playAlarmSound();
+            setIsTicking(false);
           }
           const elapsedSeconds = minutes * 60 + seconds;
           const currentPercentage = (elapsedSeconds / totalSeconds) * 100;
@@ -37,8 +50,8 @@ const Timer: React.FC<TimerProps> = ({
       }, 1000);
 
       return () => clearInterval(interval);
-    } else setIsTicking(false);
-  }, [minutes, seconds, totalSeconds, isTicking]);
+    }
+  }, [minutes, seconds, totalSeconds, isTicking, playAlarmSound]);
 
   const handleStartClick = () => {
     const newTotalSeconds = minutes * 60 + seconds;
@@ -46,12 +59,14 @@ const Timer: React.FC<TimerProps> = ({
       setTotalSeconds(newTotalSeconds);
       setPercentage(0);
       setIsTicking(true);
+      playStartSound();
     }
   };
 
   const handleStopClick = () => {
     setTotalSeconds(minutes * 60 + seconds);
     setIsTicking(false);
+    playStopSound();
   };
 
   const formatTime = (time: number): string => {

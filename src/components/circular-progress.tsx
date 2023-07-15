@@ -4,7 +4,6 @@ import {
   CircularProgressbarWithChildren,
   buildStyles,
 } from "react-circular-progressbar";
-import { cn } from "~/lib/utils";
 
 interface CircularProgressProps {
   percentage: number;
@@ -15,8 +14,6 @@ export default function CircularProgress({
   percentage,
   children,
 }: CircularProgressProps) {
-  React.useEffect(() => console.log("percentage: ", percentage), [percentage]);
-
   return (
     <CircularProgressbarWithChildren
       className="w-[200px] h-[200px]"

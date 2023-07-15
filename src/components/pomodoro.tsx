@@ -29,7 +29,7 @@ export default function Pomodoro() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Icons.focus className="w-4 h-4 mr-2" />
+              <Icons.target className="w-4 h-4 mr-2" />
               Focus
             </CardTitle>
             <CardDescription>
