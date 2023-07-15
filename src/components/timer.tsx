@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Progress } from "./ui/progress";
-import CircularProgress from "./circular-progess";
-// import CircularProgress from "./circular-progess";
+import CircularProgress from "./circular-progress";
 
 const Timer: React.FC = () => {
   const [inputMinutes, setInputMinutes] = useState("");
