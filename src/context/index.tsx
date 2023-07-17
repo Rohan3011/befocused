@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { FocusTimerContext } from "./focus-timer";
 import { BreakTimerContext } from "./break-timer";
 
