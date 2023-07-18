@@ -29,7 +29,6 @@ const Timer: React.FC<TimerProps> = ({ defaultTime, handleTimer }) => {
 
     const tick = () => {
       setRemainingSeconds((prevRemainingSeconds) => prevRemainingSeconds - 1);
-      console.timeLog("timer");
     };
 
     if (isRunning) {
@@ -51,7 +50,6 @@ const Timer: React.FC<TimerProps> = ({ defaultTime, handleTimer }) => {
     if (remainingSeconds === 0 && isRunning) {
       setIsRunning(false);
       playAlarmSound();
-      console.timeEnd("timer");
     }
   }, [defaultTime, remainingSeconds, isRunning, playAlarmSound]);
 
