@@ -4,7 +4,7 @@ import React from "react";
 
 interface FocusTimerProps {
   focusTimer: number;
-  handleFocusTimer: (val: number) => void;
+  handleFocusTimer: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const initialState = {
