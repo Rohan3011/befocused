@@ -1,18 +1,19 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import CircularProgress from "./circular-progress";
 import useAudioNotification from "~/hooks/audio-notification";
 
 interface TimerProps {
-  defaultTime: number;
-  handleTimer: (val: number) => void;
+  mode: "Focus" | "Break";
+  timer: number;
 }
 
-const Timer: React.FC<TimerProps> = ({ defaultTime, handleTimer }) => {
-  const [remainingSeconds, setRemainingSeconds] = useState(defaultTime);
-  const [isRunning, setIsRunning] = useState(false);
+const Timer: React.FC<TimerProps> = ({ mode, timer }) => {
+  const [leftSeconds, setLeftSeconds] = useState(0);
   const [percentage, setPercentage] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
 
   const playStartSound = useAudioNotification({
     audioFile: "/assets/audio/start.mp3",
@@ -25,81 +26,47 @@ const Timer: React.FC<TimerProps> = ({ defaultTime, handleTimer }) => {
   });
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-
-    const tick = () => {
-      setRemainingSeconds((prevRemainingSeconds) => prevRemainingSeconds - 1);
-    };
-
-    if (isRunning) {
-      interval = setInterval(tick, 1000);
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isRunning]);
+    setLeftSeconds(timer * 60);
+  }, [timer]);
 
   useEffect(() => {
-    const elapsedPercentage =
-      ((defaultTime - remainingSeconds) / defaultTime) * 100;
-    setPercentage(elapsedPercentage);
+    const interval = setInterval(() => {
+      if (!isRunning) return;
+      if (leftSeconds > 0) {
+        setLeftSeconds((prevSeconds) => prevSeconds - 1);
+      } else {
+        clearInterval(interval);
+        playAlarmSound();
+        setIsRunning(false);
+      }
+      const currentPercentage = (leftSeconds / (timer * 60)) * 100;
+      setPercentage(currentPercentage);
+    }, 1000);
 
-    if (remainingSeconds === 0 && isRunning) {
-      setIsRunning(false);
-      playAlarmSound();
-    }
-  }, [defaultTime, remainingSeconds, isRunning, playAlarmSound]);
+    return () => clearInterval(interval);
+  }, [timer, leftSeconds, isRunning, playAlarmSound]);
 
   const handleStartClick = () => {
-    if (remainingSeconds > 0) {
-      setIsRunning(true);
-      playStartSound();
-      console.time("timer");
-    }
+    setPercentage(0);
+    setIsRunning(true);
+    playStartSound();
   };
 
   const handleStopClick = () => {
-    handleTimer(remainingSeconds);
     setIsRunning(false);
     playStopSound();
-  };
-
-  const handleSetMinutes = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMinutes = parseInt(e.target.value, 10);
-    setRemainingSeconds((prevRemainingSeconds) => {
-      const newRemainingSeconds = newMinutes * 60 + (prevRemainingSeconds % 60);
-      return isNaN(newRemainingSeconds) || newRemainingSeconds < 0
-        ? prevRemainingSeconds
-        : newRemainingSeconds;
-    });
-  };
-
-  const handleSetSeconds = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSeconds = parseInt(e.target.value, 10);
-    setRemainingSeconds((prevRemainingSeconds) => {
-      const newRemainingSeconds =
-        Math.floor(prevRemainingSeconds / 60) * 60 + newSeconds;
-      return isNaN(newRemainingSeconds) || newRemainingSeconds < 0
-        ? prevRemainingSeconds
-        : newRemainingSeconds;
-    });
   };
 
   const formatTime = (time: number): string => {
     return time.toString().padStart(2, "0");
   };
 
-  const minutes = Math.floor(remainingSeconds / 60);
-  const seconds = remainingSeconds % 60;
-
   return (
     <div className="flex flex-col items-center justify-center">
       <CircularProgress percentage={percentage}>
         <div className="font-sans text-2xl text-center text-primary">
-          {formatTime(minutes)}:{formatTime(seconds)}
+          {formatTime(Math.floor(leftSeconds / 60))}:
+          {formatTime(leftSeconds % 60)}
         </div>
       </CircularProgress>
       {isRunning ? (
@@ -110,25 +77,9 @@ const Timer: React.FC<TimerProps> = ({ defaultTime, handleTimer }) => {
         </div>
       ) : (
         <div className="mt-4 flex flex-col sm:flex-row gap-4">
-          <Input
-            className="w-20"
-            type="number"
-            value={minutes}
-            onChange={handleSetMinutes}
-            placeholder="min"
-            min={0}
-            max={60}
-          />
-          <Input
-            className="w-20"
-            type="number"
-            value={seconds}
-            onChange={handleSetSeconds}
-            placeholder="sec"
-            min={0}
-            max={60}
-          />
-          <Button onClick={handleStartClick}>Start</Button>
+          <Button size="lg" onClick={handleStartClick}>
+            Start
+          </Button>
         </div>
       )}
     </div>

@@ -1,32 +1,46 @@
 "use client";
 
 import React from "react";
-import { FocusTimerContext } from "./focus-timer";
-import { BreakTimerContext } from "./break-timer";
+
+import { SettingsContext } from "./settings";
 
 interface ContextProviderProps {
   children?: React.ReactNode;
 }
 
 export default function ContextProvider({ children }: ContextProviderProps) {
-  const [focusTimer, setFocusTimer] = React.useState(25 * 60);
-  const [breakTimer, setBreakTimer] = React.useState(5 * 60);
+  const [focusTimer, setFocusTimer] = React.useState(25);
+  const [breakTimer, setBreakTimer] = React.useState(5);
+  const [isAudioEnabled, setIsAudioEnabled] = React.useState(true);
 
-  function handleFocusTimer(val: number) {
-    setFocusTimer(val);
+  function handleFocusTimer(e: React.ChangeEvent<HTMLInputElement>) {
+    const newMinutes = parseInt(e.target.value, 10);
+    setFocusTimer(newMinutes);
   }
 
-  function handleBreakTimer(val: number) {
-    setBreakTimer(val);
+  function handleBreakTimer(e: React.ChangeEvent<HTMLInputElement>) {
+    const newMinutes = parseInt(e.target.value, 10);
+    setBreakTimer(newMinutes);
+  }
+
+  function toggleAudio() {
+    setIsAudioEnabled(!isAudioEnabled);
   }
 
   return (
     <>
-      <FocusTimerContext.Provider value={{ focusTimer, handleFocusTimer }}>
-        <BreakTimerContext.Provider value={{ breakTimer, handleBreakTimer }}>
-          {children}
-        </BreakTimerContext.Provider>
-      </FocusTimerContext.Provider>
+      <SettingsContext.Provider
+        value={{
+          focusTimer,
+          handleFocusTimer,
+          breakTimer,
+          handleBreakTimer,
+          isAudioEnabled,
+          toggleAudio,
+        }}
+      >
+        {children}
+      </SettingsContext.Provider>
     </>
   );
 }

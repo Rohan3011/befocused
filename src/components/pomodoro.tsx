@@ -11,12 +11,10 @@ import {
 } from "./ui/card";
 import { Icons } from "./icons";
 import Timer from "./timer";
-import { FocusTimerContext } from "~/context/focus-timer";
-import { BreakTimerContext } from "~/context/break-timer";
+import { SettingsContext } from "~/context/settings";
 
 export default function Pomodoro() {
-  const { focusTimer, handleFocusTimer } = useContext(FocusTimerContext);
-  const { breakTimer, handleBreakTimer } = useContext(BreakTimerContext);
+  const { focusTimer, breakTimer } = useContext(SettingsContext);
 
   return (
     <Tabs defaultValue="focus">
@@ -36,7 +34,7 @@ export default function Pomodoro() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Timer defaultTime={focusTimer} handleTimer={handleFocusTimer} />
+            <Timer mode="Focus" timer={focusTimer} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -52,7 +50,7 @@ export default function Pomodoro() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Timer defaultTime={breakTimer} handleTimer={handleBreakTimer} />
+            <Timer mode="Break" timer={breakTimer} />
           </CardContent>
         </Card>
       </TabsContent>

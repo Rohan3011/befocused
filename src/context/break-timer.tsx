@@ -4,7 +4,7 @@ import React from "react";
 
 interface BreakTimerProps {
   breakTimer: number;
-  handleBreakTimer: (val: number) => void;
+  handleBreakTimer: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const initialState = {

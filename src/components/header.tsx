@@ -1,4 +1,5 @@
 import { Icons } from "./icons";
+import { SiteSettings } from "./settings";
 import SignIn from "./sign-in";
 
 interface SiteHeaderProps {
@@ -17,7 +18,10 @@ export function SiteHeader({ heading, text, children }: SiteHeaderProps) {
         </h1>
         {text && <p className="text-lg text-muted-foreground">{text}</p>}
       </div>
-      <SignIn />
+      <div className="flex items-center gap-2">
+        <SignIn />
+        <SiteSettings />
+      </div>
     </header>
   );
 }

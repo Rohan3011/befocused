@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { SettingsContext } from "~/context/settings";
 
 interface AudioNotificationProps {
   audioFile:
@@ -10,6 +11,7 @@ interface AudioNotificationProps {
 }
 
 const useAudioNotification = ({ audioFile }: AudioNotificationProps) => {
+  const { isAudioEnabled } = useContext(SettingsContext);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ const useAudioNotification = ({ audioFile }: AudioNotificationProps) => {
   }, [audioFile]);
 
   const playNotificationSound = () => {
-    if (audioRef.current) {
+    if (audioRef.current && isAudioEnabled) {
       audioRef.current.play();
     }
   };
