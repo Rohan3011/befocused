@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { DropdownMenuContent } from "./ui/dropdown-menu";
+import { Label } from "./ui/label";
 
 export default function SignIn() {
   const [user, setUser] = useState<User>();
@@ -73,15 +74,21 @@ export default function SignIn() {
       {user ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 px-0">
-              <Avatar>
+            <Button variant="ghost" className="flex space-x-4">
+              <Avatar id="username">
                 <AvatarImage src={user.photoURL!} />
-                <AvatarFallback>{user.displayName}</AvatarFallback>
+                <AvatarFallback>
+                  {user.displayName?.charAt(0).toLocaleUpperCase()}
+                </AvatarFallback>
               </Avatar>
+              <Label htmlFor="username">{user.displayName}</Label>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="flex px-6 py-2 items-center cursor-pointer"
+            >
               <Icons.logout className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
